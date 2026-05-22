@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ClipGrab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header class="header">
+      <img src="icons/icon-48.png" alt="ClipGrab" width="28" height="28">
+      <h1>ClipGrab</h1>
+    </header>
+
+    <form id="clip-form" novalidate>
+      <div class="field">
+        <label for="video-url">Video URL</label>
+        <input type="url" id="video-url" placeholder="Paste a video link…" required>
+        <span class="badge hidden" id="badge"></span>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="start-time">Start</label>
+          <input type="text" id="start-time" placeholder="00:00:00">
+        </div>
+        <div class="field">
+          <label for="end-time">End</label>
+          <input type="text" id="end-time" placeholder="Full">
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn">
+        <span class="btn-text">Grab Clip</span>
+        <span class="loader hidden">
+          <span class="spinner"></span>
+          Processing…
+        </span>
+      </button>
+
+      <div class="msg hidden" id="msg"></div>
+    </form>
+
+    <a class="web-link" href="https://clip-grab.vercel.app" target="_blank">Open ClipGrab on the web ↗</a>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

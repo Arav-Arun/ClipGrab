@@ -1,0 +1,409 @@
+/* ClipGrab — Main Styles */
+
+/* ── Tokens ── */
+:root {
+  --bg: #181818;
+  --card: #2d2e30;
+  --input: #1f1f1f;
+  --border: #3c4043;
+  --text: #fff;
+  --text-dim: #e0e0e0;
+  --text-muted: #555;
+  --green: #83ee87;
+  --green-rgb: 131, 238, 135;
+  --red: #ff5252;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: dark;
+}
+
+/* ── Reset ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100dvh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.app-container {
+  width: 100%;
+  max-width: 500px;
+  padding: 3rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Header ── */
+.app-header { text-align: center; margin-bottom: 2.5rem; }
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
+  margin-bottom: 0.75rem;
+}
+
+.logo-image {
+  width: 56px; height: 56px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+#app-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.8rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+
+#app-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+  max-width: 380px;
+  margin: 0.4rem auto 0;
+}
+
+/* ── Card ── */
+.grab-card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 2.25rem;
+  transition: border-color 0.35s var(--ease);
+}
+
+.grab-card:hover {
+  border-color: rgba(var(--green-rgb), 0.15);
+}
+
+/* ── Form ── */
+.form-group {
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Inputs ── */
+input[type="url"],
+input[type="text"] {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--input);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem 1.1rem;
+  min-height: 46px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.2s var(--ease);
+}
+
+input::placeholder { color: var(--text-muted); }
+input:hover:not(:focus) { border-color: #5f6368; }
+input:focus { border-color: var(--green); }
+
+/* ── URL input with paste button ── */
+.url-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.url-input-wrapper input[type="url"] { padding-right: 3rem; }
+
+.paste-btn {
+  position: absolute;
+  right: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+
+.paste-btn:hover {
+  color: var(--green);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Platform badge ── */
+.platform-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--green);
+  margin-top: 0.5rem;
+}
+
+/* ── Hint bar ── */
+.hint-bar {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+}
+
+.hint-bar strong {
+  color: var(--text-dim);
+}
+
+/* ── Time grid ── */
+.time-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ── Submit button ── */
+.accent-btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--green);
+  border: 1px solid var(--green);
+  border-radius: 10px;
+  width: 100%;
+  padding: 0.9rem;
+  min-height: 48px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.accent-btn:hover:not(:disabled) {
+  background: #a2f2a5;
+  transform: translateY(-1.5px);
+}
+
+.accent-btn:active:not(:disabled) { transform: translateY(0); }
+
+.accent-btn:disabled {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.accent-btn.loading:disabled {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--bg);
+  cursor: wait;
+  opacity: 1;
+}
+
+/* ── Spinner ── */
+.loader { display: flex; align-items: center; gap: 0.65rem; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: var(--bg);
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Feedback card ── */
+.feedback {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border: 1px solid transparent;
+  animation: fadeUp 0.35s var(--ease);
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feedback.error {
+  background: #252222;
+  border-color: rgba(255, 85, 85, 0.25);
+  color: #e8eaed;
+}
+
+.feedback.success {
+  background: #202521;
+  border-color: rgba(var(--green-rgb), 0.2);
+  color: #e8eaed;
+}
+
+.feedback .error-header { color: var(--red); font-weight: 700; margin-bottom: 0.5rem; }
+.feedback .success-header { color: var(--green); font-weight: 700; margin-bottom: 0.5rem; }
+
+.feedback .error-list {
+  list-style: disc;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.feedback .error-list li { color: #e8eaed; }
+
+/* ── Utilities ── */
+.hidden { display: none !important; }
+
+/* ── Footer ── */
+.app-footer {
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-dim);
+}
+
+.accent-link {
+  color: var(--green);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.2s;
+}
+
+.accent-link:hover { color: #a2f2a5; }
+
+/* ── Header pill button ── */
+.header-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  color: var(--text);
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.pill-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ── Install steps panel ── */
+.install-steps {
+  margin-top: 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  max-width: 400px;
+  animation: fadeUp 0.35s var(--ease);
+}
+
+.install-steps ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.install-steps li::marker { color: var(--green); font-weight: 700; }
+
+.install-steps code {
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(var(--green-rgb), 0.08);
+  padding: 0.15em 0.4em;
+  border-radius: 5px;
+  font-size: 0.8rem;
+}
+
+.download-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  background: var(--green);
+  color: var(--bg);
+  border-radius: 6px;
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: opacity 0.2s, transform 0.1s;
+  vertical-align: middle;
+  margin: 0 4px;
+}
+
+.download-badge:hover {
+  opacity: 0.9;
+  color: var(--bg);
+  transform: translateY(-0.5px);
+}
+
+.download-badge svg {
+  flex-shrink: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 480px) {
+  .app-container { padding: 2rem 1rem; }
+  .grab-card { padding: 1.5rem; border-radius: 16px; }
+  #app-title { font-size: 2.2rem; }
+  #app-subtitle { font-size: 0.85rem; }
+  .logo-image { width: 44px; height: 44px; }
+  .time-grid { grid-template-columns: 1fr; gap: 0.5rem; }
+  .form-group { margin-bottom: 1.25rem; }
+  .accent-btn { min-height: 44px; }
+  .hint-bar { font-size: 0.75rem; padding: 0.7rem 0.85rem; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #333; }

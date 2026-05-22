@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ClipGrab - Video Clipper</title>
+  <meta name="description" content="Free video clipper for X/Twitter, Instagram, Reddit, Vimeo, Twitch, and Streamable. Paste a link, pick a time range, download your clip.">
+  <link rel="shortcut icon" href="assets/ClipGrab-logo.png?v=3" type="image/x-icon">
+  <link rel="icon" type="image/png" href="assets/ClipGrab-logo.png?v=3">
+  <link rel="apple-touch-icon" href="assets/ClipGrab-logo.png?v=3">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+
+    <header class="app-header">
+      <div class="logo-container">
+        <img class="logo-image" src="assets/ClipGrab-logo.png" alt="ClipGrab Logo" width="56" height="56">
+        <h1 id="app-title">ClipGrab</h1>
+      </div>
+      <p id="app-subtitle">Download and clip videos from X/Twitter, Instagram, Reddit, Vimeo, Twitch, and Streamable.</p>
+
+      <div class="header-actions">
+        <button type="button" id="install-toggle-btn" class="pill-btn" aria-expanded="false" aria-controls="install-steps">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Install Extension
+        </button>
+      </div>
+
+      <div class="install-steps hidden" id="install-steps">
+        <ol>
+          <li>
+            Download the 
+            <a href="extension/clipgrab-extension.zip" download class="download-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+              </svg>
+              clipgrab-extension.zip
+            </a>
+            and unzip it.
+          </li>
+          <li>Open <code>chrome://extensions</code> in your browser.</li>
+          <li>Enable <strong>Developer mode</strong> (top-right toggle).</li>
+          <li>Click <strong>Load unpacked</strong> and select the unzipped folder.</li>
+        </ol>
+      </div>
+    </header>
+
+    <main>
+      <form id="clip-form" class="grab-card" novalidate>
+
+        <div class="form-group">
+          <label for="video-url" class="field-label">Video URL</label>
+          <div class="url-input-wrapper">
+            <input type="url" id="video-url" placeholder="Paste any video link here" autocomplete="off" required autofocus>
+            <button type="button" id="paste-btn" class="paste-btn" title="Paste from clipboard" aria-label="Paste from clipboard">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+          <span class="platform-badge hidden" id="platform-badge"></span>
+        </div>
+
+        <div class="hint-bar">
+          <span><strong>Format:</strong> HH:MM:SS (leave blank for full video)</span>
+        </div>
+
+        <div class="time-grid">
+          <div class="form-group">
+            <label for="start-time" class="field-label">Start Time</label>
+            <input type="text" id="start-time" placeholder="00:00:00" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="end-time" class="field-label">End Time</label>
+            <input type="text" id="end-time" placeholder="00:00:10" autocomplete="off">
+          </div>
+        </div>
+
+        <button type="submit" id="submit-btn" class="accent-btn">
+          <span class="btn-text">Grab Clip</span>
+          <span class="loader hidden" aria-hidden="true">
+            <span class="spinner"></span>
+            Processing…
+          </span>
+        </button>
+
+        <div class="feedback hidden" id="feedback" aria-live="assertive">
+          <p id="feedback-msg"></p>
+        </div>
+
+      </form>
+    </main>
+
+    <footer class="app-footer">
+      <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener noreferrer" class="accent-link">Arav Arun</a></p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
