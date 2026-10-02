@@ -1,13 +1,4 @@
 {
-  "version": 2,
-  "rewrites": [
-    {
-      "source": "/clip",
-      "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/$1"
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi"
 }

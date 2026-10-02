@@ -1,7 +1,12 @@
 downloads/*
-backend/server
 .DS_Store
 Thumbs.db
 *.env
+.env*
+.venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.ruff_cache/
+.vercel/
+.mcp.json
