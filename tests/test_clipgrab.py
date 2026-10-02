@@ -3,6 +3,7 @@ from zipfile import ZipFile
 
 import pytest
 from fastapi.testclient import TestClient
+from yt_dlp.downloader.external import FFmpegFD
 
 from server import engine, main
 from server.engine import ClipError
@@ -29,6 +30,9 @@ def test_request_parsing():
          "auth_required", "Instagram only shows this to logged-in users."),
         ("ERROR: [youtube] dQw4w9WgXcQ: Sign in to confirm you're not a bot",
          "auth_required", "YouTube only shows this to logged-in users."),
+        ("ERROR: [instagram:story] kjsce_codecell: Unable to download webpage: HTTP Error 429: "
+         "Too Many Requests (caused by <HTTPError 429: Too Many Requests>)", "auth_required",
+         "Instagram is rate-limiting ClipGrab's server. Your login usually gets past it."),
         ("ERROR: [generic] Unsupported URL: https://example.com/",
          "unsupported", "No video or photo found at this link."),
         ("ERROR: [youtube] abc: Video unavailable. This video has been removed by the uploader",
@@ -94,6 +98,13 @@ def test_extension_zip_matches_its_source():
         for file in (root / "extension").rglob("[!.]*.*"):
             name = file.relative_to(root / "extension").as_posix()
             assert archive.read(name) == file.read_bytes(), f"Rebuild the zip, {name} changed"
+
+
+def test_trimming_works_without_a_system_ffmpeg(monkeypatch):  # like on Vercel
+    monkeypatch.setenv("PATH", "")
+    monkeypatch.setattr(engine, "_check_public", lambda url: None)
+    with engine._ytdlp("https://example.com/", None):
+        assert FFmpegFD.available()
 
 
 def test_engine_errors_become_json(monkeypatch):

@@ -42,7 +42,9 @@ async function lookup() {
     const response = await fetch(`${API}/api/info`, { method: "POST", headers: { "Content-Type": "application/json" }, body });
     const data = await response.json();
     if (ticket !== lookups) return; // a newer link was entered meanwhile
-    if (data.code === "auth_required" && sent) return say(`${data.error} Log in to ${site(url)} in Chrome, then try again.`);
+    if (data.code === "auth_required" && sent) {
+      return say(`${site(url)} still refused, even with your login. Check you're logged in there, then try again in a minute.`);
+    }
     if (!response.ok) return say(data.error, data.code === "auth_required" && url);
     [info, item] = [data, data.items[0]];
     say("");

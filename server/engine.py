@@ -13,6 +13,7 @@ from urllib.parse import urlsplit
 import imageio_ffmpeg
 from yt_dlp import YoutubeDL
 from yt_dlp.extractor.instagram import InstagramIE, InstagramStoryIE
+from yt_dlp.postprocessor import FFmpegPostProcessor
 from yt_dlp.utils import DownloadError, format_field, sanitize_filename, traverse_obj
 
 OPTIONS = {
@@ -21,7 +22,6 @@ OPTIONS = {
     "noplaylist": True,
     "playlistend": 50,
     "cachedir": False,  # read-only filesystem on Vercel
-    "ffmpeg_location": imageio_ffmpeg.get_ffmpeg_exe(),
     # Best quality up to 1080p, preferring H.264 + AAC so clips play everywhere.
     "format": "bv*+ba/b",
     "format_sort": ["res:1080", "vcodec:h264", "acodec:aac"],
@@ -32,6 +32,8 @@ NAMES = {"youtube": "YouTube", "twitter": "X", "tiktok": "TikTok", "soundcloud":
 ERRORS = (  # (code, HTTP status, pattern in yt-dlp's message, message for the user)
     ("auth_required", 401, r"--cookies|log ?in|sign in|private|not a bot",
      "{site} only shows this to logged-in users."),
+    ("auth_required", 401, r"\b429\b|too many requests",
+     "{site} is rate-limiting ClipGrab's server. Your login usually gets past it."),
     ("unsupported", 422, r"unsupported url|no video", "No video or photo found at this link."),
     ("not_found", 404, r"\b404\b|unavailable|does not exist|removed", None),
 )  # fmt: skip
@@ -126,6 +128,8 @@ def _section(info, start, end):
 @contextmanager
 def _ytdlp(url, cookies, **options):
     _check_public(url)
+    # yt-dlp checks for ffmpeg here (not via its options) before trimming; Vercel has none on PATH.
+    FFmpegPostProcessor._ffmpeg_location.set(imageio_ffmpeg.get_ffmpeg_exe())
     ydl = YoutubeDL({**OPTIONS, **options}, auto_init=False)
     for extractor in (InstagramPhotosIE, InstagramStoryPhotosIE):  # first, so they win
         ydl.add_info_extractor(extractor())
