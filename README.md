@@ -3,8 +3,6 @@
 - Just paste a link, optionally select a start and end time, and download the exact clip you need.
 - The Chrome extension auto-detects videos from your current tab to make clipping even faster.
 
-<video src="https://github.com/user-attachments/assets/6212ee20-2571-4ea4-bcfe-077f26aba9e2" width="100%" controls></video>
-
 ## Supported Platforms
 
 - **X / Twitter**
