@@ -43,6 +43,7 @@ OPTIONS = {
     "cachedir": False,  # Vercel's filesystem is read-only outside /tmp
     # Single-file MP4s over HTTPS (all three sites offer them). X's other formats are
     # separate HLS audio and video streams, which yt-dlp can't trim from a mid-point.
+    # fetch() narrows this down to a chosen height.
     "format": "b[protocol=https]/b",
     "merge_output_format": "mp4",
     "max_filesize": 450 * 2**20,  # Vercel functions get 512 MB of /tmp
@@ -67,24 +68,35 @@ def platform(url: str) -> str:
 
 
 def probe(url: str) -> dict:
-    """Title, uploader, thumbnail and length of the video at a link, without downloading it."""
+    """What's at a link, without downloading it: title, length, a playable preview and
+    the qualities on offer (height in pixels, with the full video's size in bytes)."""
     info = _first(_run(url, {}, download=False))
+    files = sorted(
+        (f for f in info.get("formats") or [] if f.get("protocol") == "https" and f.get("height")),
+        key=lambda f: f["height"],
+    )
+    sizes = {f["height"]: f.get("filesize") or f.get("filesize_approx") for f in files}
+    playable = [f for f in files if f["height"] <= 720] or files
     return {
         "platform": platform(url),
         "title": info.get("title"),
         "uploader": info.get("uploader"),
         "thumbnail": info.get("thumbnail"),
         "duration": info.get("duration"),
+        "preview": playable[-1]["url"] if playable else info.get("url"),
+        "qualities": [{"height": h, "size": size} for h, size in reversed(sizes.items())],
     }
 
 
-def fetch(url: str, start: float | None = None, end: float | None = None) -> tuple[Path, str]:
-    """Download the video into a new temp folder, trimmed to start/end (in seconds).
-
-    Returns the file and a filename for the user. The caller deletes the folder.
+def fetch(url: str, start=None, end=None, height: int | None = None) -> tuple[Path, dict]:
+    """Download the video into a new temp folder as MP4, trimmed to start/end (in seconds)
+    and at most `height` pixels tall. Returns the file and yt-dlp's info about the video.
+    The caller deletes the folder.
     """
     folder = Path(tempfile.mkdtemp(prefix="clipgrab-"))
     options = {"outtmpl": str(folder / "video.%(ext)s")}
+    if height:
+        options["format"] = f"b[protocol=https][height<={height}]/{OPTIONS['format']}"
     if start is not None or end is not None:
         options["download_ranges"] = lambda info, _: [_section(info, start, end)]
     try:
@@ -92,11 +104,15 @@ def fetch(url: str, start: float | None = None, end: float | None = None) -> tup
         file = next(folder.glob("video.*"), None)
         if not file:
             raise ClipError("No file came out of that. It may be over 450 MB.", 502)
-        title = sanitize_filename(info.get("title") or "clip")[:80].strip(" .")
-        return file, f"{title}.mp4"
+        return file, info
     except BaseException:
         shutil.rmtree(folder, ignore_errors=True)
         raise
+
+
+def filename(info: dict, extension: str) -> str:
+    """A safe filename from the video's title, like "Some title.gif"."""
+    return f"{sanitize_filename(info.get('title') or 'clip')[:80].strip(' .')}.{extension}"
 
 
 def _section(info: dict, start: float | None, end: float | None) -> dict:

@@ -2,16 +2,17 @@
 
 import re
 import shutil
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import FileResponse, JSONResponse
-from pydantic import AfterValidator, BaseModel, BeforeValidator, model_validator
+from pydantic import AfterValidator, BaseModel, BeforeValidator, Field, model_validator
 from starlette.background import BackgroundTask
 from yt_dlp.utils import parse_duration
 
-from .clipper import ClipError, fetch, probe
+from .clipper import ClipError, fetch, filename, probe
+from .export import PRESETS, export
 
 app = FastAPI(
     title="ClipGrab API", docs_url="/api/docs", redoc_url=None, openapi_url="/api/openapi.json"
@@ -44,6 +45,8 @@ class Link(BaseModel):
 class Clip(Link):
     start: Annotated[float | None, BeforeValidator(_seconds)] = None
     end: Annotated[float | None, BeforeValidator(_seconds)] = None
+    preset: Literal["mp4", "gif", "mp3", "small", "vertical"] = "mp4"
+    height: int | None = Field(None, ge=144, le=2160, description="Max height, e.g. 720")
 
     @model_validator(mode="after")
     def _start_before_end(self):
@@ -70,13 +73,23 @@ def health():
 
 @app.post("/api/info")
 def info(link: Link):
-    """Look a link up: platform, title, uploader, thumbnail and duration."""
+    """Look a link up: platform, title, uploader, thumbnail, duration, preview and qualities."""
     return probe(link.url)
 
 
 @app.post("/api/download")
 def download(clip: Clip):
-    """Download the video, trimmed to start/end if given, then delete its temp folder."""
-    path, name = fetch(clip.url, clip.start, clip.end)
-    cleanup = BackgroundTask(shutil.rmtree, path.parent, ignore_errors=True)
-    return FileResponse(path, media_type="video/mp4", filename=name, background=cleanup)
+    """Download the clip, convert it with the chosen preset, send it, then delete its folder."""
+    video, info = fetch(clip.url, clip.start, clip.end, clip.height)
+    duration = info.get("duration") or 0
+    seconds = min(clip.end or duration, duration) - (clip.start or 0)
+    try:
+        file = export(video, clip.preset, seconds)
+    except BaseException:
+        shutil.rmtree(video.parent, ignore_errors=True)
+        raise
+    extension, media_type, _ = PRESETS[clip.preset]
+    cleanup = BackgroundTask(shutil.rmtree, video.parent, ignore_errors=True)
+    return FileResponse(
+        file, media_type=media_type, filename=filename(info, extension), background=cleanup
+    )

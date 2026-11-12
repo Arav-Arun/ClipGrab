@@ -3,62 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClipGrab: clip and download videos from X, Twitch and Streamable</title>
-  <meta name="description" content="Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.">
+  <!-- X's video server refuses to play its videos on other sites if it can see which site is asking. -->
+  <meta name="referrer" content="no-referrer">
+  <title>ClipGrab: cut and download clips from X, Twitch and Streamable</title>
+  <meta name="description" content="Paste a link from X, Twitch or Streamable, drag to the exact moment, and download it as an MP4, GIF, MP3, a Discord-sized file or a vertical 9:16 video. Free, no sign-up, no watermark.">
   <meta property="og:title" content="ClipGrab">
-  <meta property="og:description" content="Clip and download videos from X, Twitch and Streamable.">
+  <meta property="og:description" content="Cut the exact moment from any X, Twitch or Streamable video. MP4, GIF, MP3 or 9:16.">
   <meta property="og:image" content="https://clipgrab.aravarun.in/assets/banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/logo.png">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
 </head>
 <body>
-  <header>
-    <h1><img src="assets/logo.png" alt="" width="56" height="56">ClipGrab</h1>
-    <p>Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.</p>
+  <nav class="bar">
+    <a class="brand" href="/"><img src="assets/logo.png" alt="" width="28" height="28">ClipGrab</a>
+    <div class="links">
+      <a href="#uses">Use cases</a>
+      <a href="#how">How it works</a>
+      <a href="https://github.com/Arav-Arun/ClipGrab" target="_blank" rel="noopener">GitHub ↗</a>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <p class="kicker">X · Twitch · Streamable</p>
+    <h1>Cut the exact moment from a video</h1>
+    <p class="lede">Paste a link, drag to the part you want, and download it as an MP4, GIF, MP3, a Discord-sized file or a vertical clip. Free, no sign-up, no watermark.</p>
   </header>
 
-  <form class="card" id="form" novalidate>
-    <div class="field">
-      <label for="link">Link</label>
+  <main>
+    <form class="tool" id="form" novalidate>
+      <label class="label" for="link">Video link</label>
       <div class="link-row">
         <input type="url" id="link" placeholder="https://x.com/user/status/…" autocomplete="off" spellcheck="false" autofocus>
-        <button type="button" id="paste" title="Paste from clipboard" aria-label="Paste from clipboard">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-        </button>
+        <button type="button" id="paste" class="ghost">Paste</button>
       </div>
-    </div>
 
-    <section class="preview" id="preview" hidden aria-live="polite">
-      <div class="thumb"><img id="thumb" alt="" referrerpolicy="no-referrer"><span id="badge"></span></div>
-      <div>
-        <p class="platform" id="platform"></p>
-        <h2 id="title"></h2>
-        <p class="muted" id="uploader"></p>
-      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+
+      <section id="editor" hidden>
+        <div class="meta">
+          <span class="tag" id="platform"></span>
+          <h2 id="title"></h2>
+          <p class="dim" id="uploader"></p>
+        </div>
+
+        <video id="player" controls playsinline preload="metadata"></video>
+
+        <!-- Two range inputs on one track: the left handle is the start, the right one the end. -->
+        <div class="timeline" id="timeline">
+          <div class="selection" id="selection"></div>
+          <input type="range" id="from" min="0" step="0.1" aria-label="Clip start">
+          <input type="range" id="to" min="0" step="0.1" aria-label="Clip end">
+        </div>
+
+        <div class="times">
+          <label>Start <input id="start" inputmode="decimal" autocomplete="off"></label>
+          <button type="button" class="ghost" id="mark-start" title="Set the start to where the video is now">⇤ Mark</button>
+          <button type="button" class="ghost" id="play-clip">▶ Play clip</button>
+          <button type="button" class="ghost" id="mark-end" title="Set the end to where the video is now">Mark ⇥</button>
+          <label>End <input id="end" inputmode="decimal" autocomplete="off"></label>
+        </div>
+
+        <fieldset class="presets">
+          <legend class="label">Export as</legend>
+          <label><input type="radio" name="preset" value="mp4" checked><b>MP4</b><small>Original quality</small></label>
+          <label><input type="radio" name="preset" value="gif"><b>GIF</b><small>For chats and docs</small></label>
+          <label><input type="radio" name="preset" value="mp3"><b>MP3</b><small>Just the audio</small></label>
+          <label><input type="radio" name="preset" value="small"><b>Small</b><small>Under 10 MB</small></label>
+          <label><input type="radio" name="preset" value="vertical"><b>9:16</b><small>Reels, Shorts, TikTok</small></label>
+        </fieldset>
+
+        <label class="quality" id="quality-row">Quality <select id="quality"></select></label>
+
+        <button type="submit" class="primary" id="submit">Download</button>
+      </section>
+    </form>
+
+    <section class="recent" id="recent" hidden>
+      <h3 class="label">Recent clips</h3>
+      <ul id="recent-list"></ul>
     </section>
+  </main>
 
-
-    <div id="trim">
-      <div class="times">
-        <label>Start <input id="start" placeholder="0:00" inputmode="decimal" autocomplete="off"></label>
-        <label>End <input id="end" placeholder="End" inputmode="decimal" autocomplete="off"></label>
-      </div>
-      <p class="muted">Seconds or m:ss, like 1:30. Leave both empty for the whole video.</p>
+  <section class="uses" id="uses">
+    <h2>What people use it for</h2>
+    <div class="grid">
+      <article><b>Reply with the moment</b><p>Turn the three seconds that matter into a GIF and drop it in Slack, Discord or a GitHub issue.</p></article>
+      <article><b>Repost a stream highlight</b><p>Grab a Twitch clip as a 9:16 video, ready to post to Reels, Shorts or TikTok.</p></article>
+      <article><b>Send it without a size error</b><p>“Small” squeezes the clip under 10 MB, so Discord and WhatsApp take it as is.</p></article>
+      <article><b>Keep the audio</b><p>Save a quote, a song snippet or a podcast moment from a post as an MP3.</p></article>
     </div>
+    <p class="why">Why not screen-record it? Recording is real time, captures the player's buttons and drops quality. ClipGrab cuts the original file, so a 10-second clip takes a few seconds and looks exactly like the source.</p>
+  </section>
 
-    <button type="submit" class="primary" id="submit">Download video</button>
-
-    <div class="feedback" id="feedback" hidden aria-live="assertive">
-      <p id="message"></p>
-    </div>
-  </form>
+  <section class="how" id="how">
+    <h2>How it works</h2>
+    <ol>
+      <li><b>Look up.</b> The server checks the link and asks <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp</a> what's there, without downloading. You get a preview to scrub through.</li>
+      <li><b>Cut.</b> Only the part you picked is downloaded, and ffmpeg trims it.</li>
+      <li><b>Convert.</b> For GIF, MP3, Small or 9:16, one ffmpeg command turns the clip into that format.</li>
+      <li><b>Send.</b> The file streams to your browser and is deleted from the server straight away.</li>
+    </ol>
+  </section>
 
   <footer>
-    <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener">Arav Arun</a></p>
+    <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener">Arav Arun</a> · Only download videos you have the right to use.</p>
   </footer>
 </body>
 </html>
