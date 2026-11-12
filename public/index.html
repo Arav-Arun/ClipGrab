@@ -72,32 +72,19 @@
       </section>
     </form>
 
+    <section class="uses" aria-label="What it's for">
+      <p><b>GIF</b>Reply in Slack or Discord</p>
+      <p><b>9:16</b>Post to Reels, Shorts, TikTok</p>
+      <p><b>Small</b>Send under 10 MB</p>
+      <p><b>MP3</b>Keep just the audio</p>
+    </section>
+
     <section class="recent" id="recent" hidden>
       <h3 class="label">Recent clips</h3>
       <ul id="recent-list"></ul>
     </section>
   </main>
 
-  <section class="uses" id="uses">
-    <h2>What people use it for</h2>
-    <div class="grid">
-      <article><b>Reply with the moment</b><p>Turn the three seconds that matter into a GIF and drop it in Slack, Discord or a GitHub issue.</p></article>
-      <article><b>Repost a stream highlight</b><p>Grab a Twitch clip as a 9:16 video, ready to post to Reels, Shorts or TikTok.</p></article>
-      <article><b>Send it without a size error</b><p>“Small” squeezes the clip under 10 MB, so Discord and WhatsApp take it as is.</p></article>
-      <article><b>Keep the audio</b><p>Save a quote, a song snippet or a podcast moment from a post as an MP3.</p></article>
-    </div>
-    <p class="why">Why not screen-record it? Recording is real time, captures the player's buttons and drops quality. ClipGrab cuts the original file, so a 10-second clip takes a few seconds and looks exactly like the source.</p>
-  </section>
-
-  <section class="how" id="how">
-    <h2>How it works</h2>
-    <ol>
-      <li><b>Look up.</b> The server checks the link and asks <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp</a> what's there, without downloading. You get a preview to scrub through.</li>
-      <li><b>Cut.</b> Only the part you picked is downloaded, and ffmpeg trims it.</li>
-      <li><b>Convert.</b> For GIF, MP3, Small or 9:16, one ffmpeg command turns the clip into that format.</li>
-      <li><b>Send.</b> The file streams to your browser and is deleted from the server straight away.</li>
-    </ol>
-  </section>
 
   <footer>
     <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener">Arav Arun</a> · <a href="https://github.com/Arav-Arun/ClipGrab" target="_blank" rel="noopener">GitHub</a></p>
