@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ClipGrab: clip and download from any link</title>
-  <meta name="description" content="Paste a link from Instagram, YouTube, X, Reddit or 1,000+ other sites, pick the moment, and download it. Works with reels, stories, posts and photos.">
+  <title>ClipGrab: clip and download videos from X, Twitch and Streamable</title>
+  <meta name="description" content="Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.">
   <meta property="og:title" content="ClipGrab">
-  <meta property="og:description" content="Clip and download videos and photos from almost any link.">
+  <meta property="og:description" content="Clip and download videos from X, Twitch and Streamable.">
   <meta property="og:image" content="https://clip-grab.vercel.app/assets/clipGrab-banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/ClipGrab-logo.png?v=3">
@@ -18,10 +18,10 @@
 <body>
   <header>
     <h1><img src="assets/ClipGrab-logo.png" alt="" width="56" height="56">ClipGrab</h1>
-    <p>Paste a link from Instagram, YouTube, X, Reddit or 1,000+ other sites, pick the moment, and download it.</p>
+    <p>Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.</p>
     <button type="button" class="pill" id="install-toggle" aria-expanded="false" aria-controls="install-steps">Install the Chrome extension</button>
     <div class="steps" id="install-steps" hidden>
-      <p>It picks up the link from your current tab, and can use your login for private posts and stories.</p>
+      <p>It picks up the video link from the tab you're on.</p>
       <ol>
         <li>Download <a href="extension/clipgrab-extension.zip" download>clipgrab-extension.zip</a> and unzip it.</li>
         <li>Open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong>.</li>
@@ -34,7 +34,7 @@
     <div class="field">
       <label for="link">Link</label>
       <div class="link-row">
-        <input type="url" id="link" placeholder="Paste a link to a video, reel, story or post" autocomplete="off" spellcheck="false" autofocus>
+        <input type="url" id="link" placeholder="https://x.com/user/status/…" autocomplete="off" spellcheck="false" autofocus>
         <button type="button" id="paste" title="Paste from clipboard" aria-label="Paste from clipboard">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         </button>
@@ -50,10 +50,6 @@
       </div>
     </section>
 
-    <fieldset id="items" hidden>
-      <legend>Pick one</legend>
-      <div class="tiles" id="tiles"></div>
-    </fieldset>
 
     <div id="trim">
       <div class="times">
@@ -67,7 +63,6 @@
 
     <div class="feedback" id="feedback" hidden aria-live="assertive">
       <p id="message"></p>
-      <p id="login-hint" hidden>The ClipGrab extension can use your login for this. <button type="button" id="get-extension">Get the extension</button></p>
     </div>
   </form>
 

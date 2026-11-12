@@ -1,13 +1,13 @@
 [project]
 name = "clipgrab"
-version = "2.0.0"
-description = "Clip and download videos and photos from almost any link."
+version = "3.0.0"
+description = "Clip and download videos from X, Twitch and Streamable."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi>=0.135",
     "uvicorn>=0.42",
-    "yt-dlp[default,curl-cffi]>=2026.3.17",
+    "yt-dlp>=2026.10.26",
     "imageio-ffmpeg>=0.6",
 ]
 
@@ -28,6 +28,8 @@ entrypoint = "server.main:app"
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+markers = ["live: downloads real videos from the internet"]
+addopts = "-m 'not live'"
 
 [tool.ruff]
 line-length = 100

@@ -1,12 +1,22 @@
 {
   "manifest_version": 3,
   "name": "ClipGrab",
-  "version": "2.0.0",
-  "description": "Clip and download videos and photos from almost any link, including stories and posts only you can see.",
-  "icons": { "16": "icons/icon-16.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
-  "action": { "default_popup": "popup.html", "default_title": "ClipGrab" },
-  "permissions": ["activeTab", "downloads"],
-  "optional_permissions": ["cookies"],
-  "optional_host_permissions": ["https://*/*"],
-  "host_permissions": ["https://clip-grab.vercel.app/*"]
+  "version": "3.0.0",
+  "description": "Clip and download videos from X, Twitch and Streamable.",
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ClipGrab"
+  },
+  "permissions": [
+    "activeTab",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://clip-grab.vercel.app/*"
+  ]
 }

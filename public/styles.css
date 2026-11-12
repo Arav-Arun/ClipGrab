@@ -60,26 +60,17 @@ input::placeholder { color: var(--muted); }
 #paste:hover { color: var(--green); background: #ffffff0d; }
 .muted { color: var(--muted); font-size: 0.82rem; }
 
-/* Preview of what the link holds */
+/* Preview of the video */
 .preview { display: flex; gap: 1rem; align-items: center; padding: 0.75rem; border: 1px solid var(--line); border-radius: 14px; background: var(--field); }
 .thumb { position: relative; flex: none; }
-.thumb img, .tile img { display: block; width: 88px; height: 88px; border-radius: 10px; object-fit: cover; background: #2a2b2d; }
-.thumb span, .tile span { position: absolute; right: 5px; bottom: 5px; padding: 0 5px; border-radius: 4px; background: #000c; font-size: 0.72rem; font-weight: 700; }
+.thumb img { display: block; width: 88px; height: 88px; border-radius: 10px; object-fit: cover; background: #2a2b2d; }
+.thumb span { position: absolute; right: 5px; bottom: 5px; padding: 0 5px; border-radius: 4px; background: #000c; font-size: 0.72rem; font-weight: 700; }
 .thumb span:empty { display: none; }
 .platform { color: var(--green); font-size: 0.8rem; font-weight: 700; }
 h2 { font-size: 0.98rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .preview.loading img { animation: pulse 1s ease-in-out infinite alternate; }
 @keyframes pulse { to { opacity: 0.4; } }
 
-/* Items of a story or carousel */
-fieldset { min-width: 0; border: 0; padding: 0; }
-.tiles { display: flex; gap: 0.5rem; overflow-x: auto; padding: 0.5rem 2px 4px; }
-.tile { position: relative; flex: none; display: block; border-radius: 10px; }
-.tile img { width: 64px; height: 88px; opacity: 0.6; }
-.tile input { position: absolute; opacity: 0; }
-.tile:has(:checked) { outline: 2px solid var(--green); }
-.tile:has(:checked) img { opacity: 1; }
-.tile:has(:focus-visible) { outline: 2px solid var(--text); }
 
 .times { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 0.4rem; }
 
@@ -93,8 +84,6 @@ fieldset { min-width: 0; border: 0; padding: 0; }
 .feedback { display: grid; gap: 0.4rem; padding: 1rem 1.2rem; border: 1px solid #83ee8733; border-radius: 12px; background: #202521; font-size: 0.9rem; }
 .feedback.error { border-color: #ff6b6b40; background: #252222; }
 .feedback.error #message { color: var(--red); font-weight: 600; }
-#login-hint { color: var(--dim); }
-#login-hint button { padding: 0; border: 0; background: none; color: var(--green); font-weight: 700; text-decoration: underline; }
 
 footer { text-align: center; color: var(--dim); font-size: 0.85rem; font-weight: 600; }
 

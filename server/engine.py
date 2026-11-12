@@ -1,178 +1,139 @@
-"""yt-dlp engine: look up what a link holds, then download (and trim) one item of it."""
+"""yt-dlp engine: look up a video link, then download it, trimmed to a time range."""
 
-import ipaddress
+import os
 import re
 import shutil
-import socket
 import tempfile
-from contextlib import contextmanager
-from http.cookiejar import Cookie
 from pathlib import Path
 from urllib.parse import urlsplit
 
 import imageio_ffmpeg
 from yt_dlp import YoutubeDL
-from yt_dlp.extractor.instagram import InstagramIE, InstagramStoryIE
-from yt_dlp.postprocessor import FFmpegPostProcessor
-from yt_dlp.utils import DownloadError, format_field, sanitize_filename, traverse_obj
+from yt_dlp.utils import DownloadError, sanitize_filename
+
+
+def _ffmpeg_on_path():
+    """Vercel has no ffmpeg installed, so use the copy bundled with the imageio-ffmpeg package.
+
+    yt-dlp looks for a program named "ffmpeg" on PATH before it trims, so link it in under
+    that name.
+    """
+    if shutil.which("ffmpeg"):
+        return
+    folder = Path(tempfile.gettempdir(), "clipgrab-bin")
+    folder.mkdir(exist_ok=True)
+    link = folder / "ffmpeg"
+    if not link.exists():
+        link.symlink_to(imageio_ffmpeg.get_ffmpeg_exe())
+    os.environ["PATH"] = f"{folder}{os.pathsep}{os.environ.get('PATH', '')}"
+
+
+_ffmpeg_on_path()
+
+# The platforms ClipGrab supports, by domain. Others (YouTube, Instagram, Reddit, …)
+# block or demand a login from cloud servers, so they're refused up front.
+SITES = {"x.com": "X", "twitter.com": "X", "twitch.tv": "Twitch", "streamable.com": "Streamable"}
 
 OPTIONS = {
     "quiet": True,
     "no_warnings": True,
+    "noprogress": True,
     "noplaylist": True,
-    "playlistend": 50,
-    "cachedir": False,  # read-only filesystem on Vercel
-    # Best quality up to 1080p, preferring H.264 + AAC so clips play everywhere.
-    "format": "bv*+ba/b",
-    "format_sort": ["res:1080", "vcodec:h264", "acodec:aac"],
-    "merge_output_format": "mp4/mkv",
-    "max_filesize": 450 * 2**20,  # Vercel's /tmp holds 512 MB
+    "playlist_items": "1",  # a post with several videos: take the first
+    "cachedir": False,  # Vercel's filesystem is read-only outside /tmp
+    # Single-file MP4s over HTTPS (all three sites offer them). X's other formats are
+    # separate HLS audio and video streams, which yt-dlp can't trim from a mid-point.
+    "format": "b[protocol=https]/b",
+    "merge_output_format": "mp4",
+    "max_filesize": 450 * 2**20,  # Vercel functions get 512 MB of /tmp
 }
-NAMES = {"youtube": "YouTube", "twitter": "X", "tiktok": "TikTok", "soundcloud": "SoundCloud"}
-ERRORS = (  # (code, HTTP status, pattern in yt-dlp's message, message for the user)
-    ("auth_required", 401, r"--cookies|log ?in|sign in|private|not a bot",
-     "{site} only shows this to logged-in users."),
-    ("auth_required", 401, r"\b429\b|too many requests",
-     "{site} is rate-limiting ClipGrab's server. Your login usually gets past it."),
-    ("unsupported", 422, r"unsupported url|no video", "No video or photo found at this link."),
-    ("not_found", 404, r"\b404\b|unavailable|does not exist|removed", None),
-)  # fmt: skip
-NOISE = re.compile(  # yt-dlp's "ERROR: [site] id:" prefix and trailing hints
-    r"^ERROR: (\[.+?\] )?([\w-]+: )?|\s*(Use --cookies|See https?:|please report|\(caused by).*",
-    re.S,
-)
 
 
 class ClipError(Exception):
-    def __init__(self, code: str, message: str, status: int = 400):
+    """An error with a message for the user and the HTTP status to send it with."""
+
+    def __init__(self, message: str, status: int = 400):
         super().__init__(message)
-        self.code, self.message, self.status = code, message, status
+        self.message, self.status = message, status
 
 
-class _Photos:
-    """yt-dlp skips Instagram photos (photo stories vanish), so expose each as a one-file format."""
-
-    def _extract_product_media(self, media):
-        info = super()._extract_product_media(media)
-        photo = traverse_obj(media, ("image_versions2", "candidates", 0, "url"))
-        if photo and not info.get("formats"):
-            info["formats"] = [{"url": photo, "ext": "jpg", "format_id": "photo"}]
-            info["title"] = format_field(
-                media, [("user", "username")], "Photo by %s", default="Photo"
-            )
-        return info
+def platform(url: str) -> str:
+    """The supported platform a link belongs to, e.g. "X". Raises ClipError otherwise."""
+    host = (urlsplit(url).hostname or "").lower()
+    for domain, name in SITES.items():
+        if host == domain or host.endswith("." + domain):
+            return name
+    raise ClipError("ClipGrab works with links from X, Twitch and Streamable.")
 
 
-class InstagramPhotosIE(_Photos, InstagramIE): ...
-
-
-class InstagramStoryPhotosIE(_Photos, InstagramStoryIE): ...
-
-
-def is_photo(info: dict) -> bool:
-    return all(f.get("ext") == "jpg" for f in info.get("formats") or [info])
-
-
-def probe(url: str, cookies=None) -> dict:
-    """What a link holds: its title, platform and items (a story or carousel holds several)."""
-    with _ytdlp(url, cookies, extract_flat="in_playlist") as ydl:
-        info = ydl.extract_info(url, download=False)
-    entries = info.get("entries") if "entries" in info else [info]
-    items = [
-        {
-            "index": index,
-            "kind": "image" if is_photo(entry) else "video",
-            "thumbnail": entry.get("thumbnail") or traverse_obj(entry, ("thumbnails", -1, "url")),
-            "duration": entry.get("duration"),
-        }
-        for index, entry in enumerate(entries, 1)
-        if entry
-    ]
-    if not items:
-        raise ClipError("no_media", "There's nothing to download here right now.", 404)
+def probe(url: str) -> dict:
+    """Title, uploader, thumbnail and length of the video at a link, without downloading it."""
+    info = _first(_run(url, {}, download=False))
     return {
+        "platform": platform(url),
         "title": info.get("title"),
-        "uploader": traverse_obj([info, *entries], (..., "uploader", {str}, any)),
-        "platform": _platform(info.get("extractor"), url),
-        "thumbnail": info.get("thumbnail") or items[0]["thumbnail"],
-        "items": items,
+        "uploader": info.get("uploader"),
+        "thumbnail": info.get("thumbnail"),
+        "duration": info.get("duration"),
     }
 
 
-def fetch(url: str, item=1, start=None, end=None, cookies=None) -> tuple[Path, str]:
-    """Download one item, trimmed to start/end, into a temp folder. Returns (file, nice name)."""
+def fetch(url: str, start: float | None = None, end: float | None = None) -> tuple[Path, str]:
+    """Download the video into a new temp folder, trimmed to start/end (in seconds).
+
+    Returns the file and a filename for the user. The caller deletes the folder.
+    """
     folder = Path(tempfile.mkdtemp(prefix="clipgrab-"))
-    options = {"playlist_items": str(item), "outtmpl": str(folder / "media.%(ext)s")}
-    if start or end:
-        options["download_ranges"] = lambda info, _: _section(info, start, end)
+    options = {"outtmpl": str(folder / "video.%(ext)s")}
+    if start is not None or end is not None:
+        options["download_ranges"] = lambda info, _: [_section(info, start, end)]
     try:
-        with _ytdlp(url, cookies, **options) as ydl:
-            info = ydl.extract_info(url, download=True)
-        entry = next((e for e in info.get("entries") or [] if e), info)
-        if not (file := next(folder.glob("media.*"), None)):
-            raise ClipError("failed", "No file came out of that. It may be over 450 MB.", 502)
-        return file, sanitize_filename(entry.get("title") or "clip")[:80].strip(" .") + file.suffix
+        info = _first(_run(url, options, download=True))
+        file = next(folder.glob("video.*"), None)
+        if not file:
+            raise ClipError("No file came out of that. It may be over 450 MB.", 502)
+        title = sanitize_filename(info.get("title") or "clip")[:80].strip(" .")
+        return file, f"{title}.mp4"
     except BaseException:
         shutil.rmtree(folder, ignore_errors=True)
         raise
 
 
-def _section(info, start, end):
-    if is_photo(info):
-        return [{}]  # photos are never trimmed
-    if start and start >= (info.get("duration") or float("inf")):
-        raise ClipError("bad_range", "The start time is past the end of the video.")
-    return [{"start_time": start or 0, "end_time": end or float("inf")}]
+def _section(info: dict, start: float | None, end: float | None) -> dict:
+    duration = info.get("duration") or float("inf")
+    if start is not None and start >= duration:
+        raise ClipError("The start time is past the end of the video.")
+    return {"start_time": start or 0, "end_time": min(end or duration, duration)}
 
 
-@contextmanager
-def _ytdlp(url, cookies, **options):
-    _check_public(url)
-    # yt-dlp checks for ffmpeg here (not via its options) before trimming; Vercel has none on PATH.
-    FFmpegPostProcessor._ffmpeg_location.set(imageio_ffmpeg.get_ffmpeg_exe())
-    ydl = YoutubeDL({**OPTIONS, **options}, auto_init=False)
-    for extractor in (InstagramPhotosIE, InstagramStoryPhotosIE):  # first, so they win
-        ydl.add_info_extractor(extractor())
-    ydl.add_default_info_extractors()
-    for c in cookies or []:  # the user's login, sent by the extension; kept in memory only
-        dot = c.domain.startswith(".")
-        ydl.cookiejar.set_cookie(Cookie(
-            version=0, name=c.name, value=c.value, port=None, port_specified=False,
-            domain=c.domain, domain_specified=dot, domain_initial_dot=dot, path=c.path,
-            path_specified=True, secure=c.secure, expires=int(c.expirationDate) or None,
-            discard=False, comment=None, comment_url=None, rest={},
-        ))  # fmt: skip
+def _run(url: str, options: dict, download: bool) -> dict:
+    platform(url)
     try:
-        with ydl:
-            yield ydl
+        with YoutubeDL({**OPTIONS, **options}) as ydl:
+            return ydl.extract_info(url, download=download)
     except DownloadError as error:
-        raise _explain(str(error), url) from None
+        raise _explain(str(error)) from None
 
 
-def _check_public(url):
-    """Refuse links to private or internal addresses, so the server can't be turned on itself."""
-    try:
-        addresses = socket.getaddrinfo(urlsplit(url).hostname, None)
-    except (socket.gaierror, UnicodeError):
-        raise ClipError("invalid_url", "That link doesn't lead to a website.") from None
-    if not all(ipaddress.ip_address(a[4][0].split("%")[0]).is_global for a in addresses):
-        raise ClipError("invalid_url", "Links to private network addresses aren't allowed.")
+def _first(info: dict) -> dict:
+    """yt-dlp returns a playlist for posts with several videos; use the first one."""
+    entries = [entry for entry in info.get("entries") or [] if entry]
+    return entries[0] if entries else info
 
 
-def _platform(extractor, url):
-    key = (extractor or "generic").split(":")[0].lower()
-    if key == "generic":
-        return urlsplit(url).hostname.removeprefix("www.")
-    return NAMES.get(key, key.capitalize())
+# (pattern in yt-dlp's error, message for the user, HTTP status), checked in order
+ERRORS = [
+    (r"no video could be found|no video formats", "There's no video in that post.", 404),
+    (r"\b404\b|not found|unavailable|does not exist|removed|suspended",
+     "That video doesn't exist anymore, or the account is private.", 404),
+    (r"log ?in|sign in|cookies|private|protected",
+     "That video is only visible to logged-in users.", 403),
+]  # fmt: skip
 
 
-def _explain(raw, url):
-    """Turn a raw yt-dlp error into a short message and a code clients can act on."""
-    code, status, _, message = next(
-        (kind for kind in ERRORS if re.search(kind[2], raw, re.I)), ("failed", 502, "", None)
-    )
-    if message:
-        tag = re.search(r"\[([^\]]+)\]", raw)
-        return ClipError(code, message.format(site=_platform(tag and tag[1], url)), status)
-    detail = NOISE.sub("", raw).strip(" ;,.")
-    return ClipError(code, f"{detail}.", status)
+def _explain(raw: str) -> ClipError:
+    """Turn a raw yt-dlp error into a short message (yt-dlp already logs the full one)."""
+    for pattern, message, status in ERRORS:
+        if re.search(pattern, raw, re.I):
+            return ClipError(message, status)
+    return ClipError("Couldn't download that video. Check the link and try again.", 502)
