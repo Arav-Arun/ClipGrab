@@ -40,12 +40,6 @@ header { display: grid; justify-items: center; gap: 1rem; text-align: center; }
 h1 { display: flex; align-items: center; gap: 0.8rem; font: 900 2.8rem Outfit, sans-serif; letter-spacing: -0.04em; }
 h1 img { border-radius: 12px; }
 header > p { max-width: 400px; color: var(--dim); }
-.pill { padding: 0.6rem 1.2rem; border: 1px solid #ffffff22; border-radius: 99px; background: #ffffff0d; font-weight: 600; }
-.pill:hover { background: #ffffff1a; }
-.steps { display: grid; gap: 0.6rem; max-width: 420px; padding: 1.2rem 1.4rem; border: 1px solid var(--line); border-radius: 14px; text-align: left; color: var(--dim); font-size: 0.9rem; }
-.steps ol { display: grid; gap: 0.4rem; padding-left: 1.2rem; }
-.steps li::marker { color: var(--green); font-weight: 700; }
-code { color: var(--green); }
 
 /* Form */
 .card { display: grid; gap: 1.1rem; padding: 2rem; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }

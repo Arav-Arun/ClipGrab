@@ -1,6 +1,6 @@
 // ClipGrab website: paste a link, see what it is, pick a time range, download.
 const $ = (id) => document.getElementById(id);
-const [link, start, end, submit, feedback, steps] = ["link", "start", "end", "submit", "feedback", "install-steps"].map($);
+const [link, start, end, submit, feedback] = ["link", "start", "end", "submit", "feedback"].map($);
 
 // The link currently in the box, and what /api/info said about it.
 let current = { url: "", info: null, request: null };
@@ -106,10 +106,6 @@ $("paste").onclick = async () => {
 // Some CDNs won't show their thumbnails on other sites; hide a broken image.
 $("thumb").onerror = () => $("thumb").removeAttribute("src");
 
-$("install-toggle").onclick = () => {
-  steps.hidden = !steps.hidden;
-  $("install-toggle").setAttribute("aria-expanded", !steps.hidden);
-};
 
 // Links can be shared as https://clipgrab.aravarun.in/?url=…
 link.value = new URLSearchParams(location.search).get("url") ?? "";

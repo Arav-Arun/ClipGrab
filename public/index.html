@@ -7,9 +7,9 @@
   <meta name="description" content="Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.">
   <meta property="og:title" content="ClipGrab">
   <meta property="og:description" content="Clip and download videos from X, Twitch and Streamable.">
-  <meta property="og:image" content="https://clipgrab.aravarun.in/assets/clipGrab-banner.png">
+  <meta property="og:image" content="https://clipgrab.aravarun.in/assets/banner.png">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="icon" type="image/png" href="assets/ClipGrab-logo.png?v=3">
+  <link rel="icon" type="image/png" href="assets/logo.png">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
@@ -17,17 +17,8 @@
 </head>
 <body>
   <header>
-    <h1><img src="assets/ClipGrab-logo.png" alt="" width="56" height="56">ClipGrab</h1>
+    <h1><img src="assets/logo.png" alt="" width="56" height="56">ClipGrab</h1>
     <p>Paste a link from X, Twitch or Streamable, pick the moment, and download it as an MP4.</p>
-    <button type="button" class="pill" id="install-toggle" aria-expanded="false" aria-controls="install-steps">Install the Chrome extension</button>
-    <div class="steps" id="install-steps" hidden>
-      <p>It picks up the video link from the tab you're on.</p>
-      <ol>
-        <li>Download <a href="extension/clipgrab-extension.zip" download>clipgrab-extension.zip</a> and unzip it.</li>
-        <li>Open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong>.</li>
-        <li>Click <strong>Load unpacked</strong> and choose the unzipped folder.</li>
-      </ol>
-    </div>
   </header>
 
   <form class="card" id="form" novalidate>

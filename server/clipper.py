@@ -1,4 +1,4 @@
-"""yt-dlp engine: look up a video link, then download it, trimmed to a time range."""
+"""The clipper: look up a video link, then download it, trimmed to a time range."""
 
 import os
 import re

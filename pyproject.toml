@@ -12,11 +12,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = [
-    "httpx2>=2.13.1",
-    "pytest>=9.0",
-    "ruff>=0.14",
-]
+dev = ["ruff>=0.14"]
 
 [tool.uv]
 package = false
@@ -24,12 +20,6 @@ package = false
 # Vercel deploys this FastAPI app as a single function; public/ is served from the CDN.
 [tool.vercel]
 entrypoint = "server.main:app"
-
-[tool.pytest.ini_options]
-testpaths = ["tests"]
-pythonpath = ["."]
-markers = ["live: downloads real videos from the internet"]
-addopts = "-m 'not live'"
 
 [tool.ruff]
 line-length = 100

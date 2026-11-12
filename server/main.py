@@ -6,19 +6,16 @@ from typing import Annotated
 
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
-from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import AfterValidator, BaseModel, BeforeValidator, model_validator
 from starlette.background import BackgroundTask
 from yt_dlp.utils import parse_duration
 
-from .engine import ClipError, fetch, probe
+from .clipper import ClipError, fetch, probe
 
 app = FastAPI(
     title="ClipGrab API", docs_url="/api/docs", redoc_url=None, openapi_url="/api/openapi.json"
 )
-# The Chrome extension calls the API from its own origin, so allow cross-origin requests.
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
 
 def _link(value: str) -> str:
