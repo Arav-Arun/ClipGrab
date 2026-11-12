@@ -2,8 +2,6 @@
 
 Paste a link from **X**, **Twitch** or **Streamable**, pick the moment, and download it as an MP4.
 
-<video src="https://github.com/user-attachments/assets/6212ee20-2571-4ea4-bcfe-077f26aba9e2" width="100%" controls></video>
-
 - **Clip or download whole**: enter a start and end time (`90`, `1:30` or `0:01:30`), or leave them empty for the full video.
 - **Preview first**: as soon as you paste a link, ClipGrab shows the video's title, thumbnail and length.
 - **Chrome extension**: fills in the link from the tab you're on, and downloads through Chrome's download manager.
