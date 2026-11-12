@@ -16,8 +16,13 @@
 :focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
 input:focus-visible, select:focus-visible { outline: none; }
 
+/* Header, tool and footer sit as one block in the middle of the screen. */
 body {
   min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 2rem 0;
   background: var(--bg);
   color: var(--text);
   font: 15px/1.5 "Plus Jakarta Sans", system-ui, sans-serif;
@@ -33,8 +38,8 @@ button { cursor: pointer; }
 .label { color: var(--dim); font-size: 0.85rem; font-weight: 600; }
 
 /* Header */
-header { max-width: 560px; margin: 0 auto; padding: 3rem 1.25rem 2rem; display: grid; justify-items: center; gap: 1rem; text-align: center; }
-h1 { display: flex; align-items: center; gap: 0.8rem; font: 900 2.8rem Outfit, sans-serif; letter-spacing: -0.04em; }
+header { width: 100%; max-width: 560px; margin: 0 auto; padding: 0 1.25rem 2rem; display: grid; justify-items: center; gap: 1rem; text-align: center; }
+h1 { display: flex; align-items: center; gap: 0.8rem; font: 700 2.6rem Outfit, sans-serif; letter-spacing: -0.03em; }
 h1 img { border-radius: 12px; }
 header { gap: 0.5rem; }
 h1 { margin-bottom: 0.5rem; }
@@ -43,7 +48,7 @@ h1 { margin-bottom: 0.5rem; }
 .subline { color: var(--muted); font-size: 0.92rem; text-wrap: balance; }
 
 /* The card with the tool */
-main { max-width: 620px; margin: 0 auto; padding: 0 1.25rem; display: grid; gap: 1.5rem; }
+main { width: 100%; max-width: 620px; margin: 0 auto; padding: 0 1.25rem; display: grid; gap: 1.5rem; }
 .card { display: grid; gap: 1rem; padding: 2rem; border: 1px solid var(--line); border-radius: 20px; background: var(--card); }
 input, select { width: 100%; min-height: 46px; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 10px; background: var(--field); outline: none; }
 input:focus, select:focus { border-color: var(--green); }
@@ -113,10 +118,9 @@ video { width: 100%; max-height: 380px; border-radius: 12px; background: #000; }
 .uses b { font-size: 0.95rem; }
 .uses span { color: var(--muted); font-size: 0.78rem; }
 
-footer { padding: 3rem 1.25rem 2.5rem; display: grid; gap: 0.3rem; text-align: center; color: var(--dim); font-size: 0.85rem; font-weight: 600; }
+footer { padding: 2.5rem 1.25rem 0; text-align: center; color: var(--dim); font-size: 0.85rem; font-weight: 600; }
 
 @media (max-width: 600px) {
-  header { padding-top: 2rem; }
   h1 { font-size: 2.2rem; }
   .card { padding: 1.4rem; }
   .presets { grid-template-columns: repeat(3, 1fr); }
