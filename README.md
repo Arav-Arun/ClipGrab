@@ -4,6 +4,10 @@ Cut the exact moment from an **X**, **Twitch** or **Streamable** video, and down
 
 **Live at [clipgrab.aravarun.in](https://clipgrab.aravarun.in)**
 
+[![ClipGrab: paste a link, trim on the timeline, pick a format](docs/preview.webp)](docs/demo.mp4)
+
+▶ [Watch the demo video](docs/demo.mp4)
+
 ## Why it's useful
 
 The usual way to share part of a video is to screen-record it. That's slow (recording runs in real time), it catches the player's buttons, and it loses quality. ClipGrab cuts the original file instead, so a 10-second clip takes a few seconds and looks exactly like the source.
@@ -43,7 +47,7 @@ server/
   export.py      the GIF, MP3, Small and 9:16 presets, one ffmpeg command each
   __main__.py    runs the API and website together locally
 public/          the website: index.html, app.js, styles.css, assets/
-docs/            architecture diagram and demo video
+docs/            architecture diagram, demo video and preview image
 pyproject.toml   dependencies, plus the Vercel entrypoint
 vercel.json      tells Vercel this is a FastAPI app
 ```
