@@ -12,27 +12,19 @@
   <meta property="og:image" content="https://clipgrab.aravarun.in/assets/banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" type="image/png" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;900&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="app.js"></script>
 </head>
 <body>
-  <nav class="bar">
-    <a class="brand" href="/"><img src="assets/logo.png" alt="" width="28" height="28">ClipGrab</a>
-    <div class="links">
-      <a href="#uses">Use cases</a>
-      <a href="#how">How it works</a>
-      <a href="https://github.com/Arav-Arun/ClipGrab" target="_blank" rel="noopener">GitHub ↗</a>
-    </div>
-  </nav>
-
-  <header class="hero">
-    <p class="kicker">X · Twitch · Streamable</p>
-    <h1>Cut the exact moment from a video</h1>
-    <p class="lede">Paste a link, drag to the part you want, and download it as an MP4, GIF, MP3, a Discord-sized file or a vertical clip. Free, no sign-up, no watermark.</p>
+  <header>
+    <h1><img src="assets/logo.png" alt="" width="56" height="56">ClipGrab</h1>
+    <p>Cut the exact moment from an X, Twitch or Streamable video, and download it as an MP4, GIF, MP3, a Discord-sized file or a vertical clip.</p>
   </header>
 
   <main>
-    <form class="tool" id="form" novalidate>
+    <form class="card" id="form" novalidate>
       <label class="label" for="link">Video link</label>
       <div class="link-row">
         <input type="url" id="link" placeholder="https://x.com/user/status/…" autocomplete="off" spellcheck="false" autofocus>
@@ -108,7 +100,8 @@
   </section>
 
   <footer>
-    <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener">Arav Arun</a> · Only download videos you have the right to use.</p>
+    <p>Made by <a href="https://aravarun.xyz" target="_blank" rel="noopener">Arav Arun</a> · <a href="https://github.com/Arav-Arun/ClipGrab" target="_blank" rel="noopener">GitHub</a></p>
+    <p class="muted">Only download videos you have the right to use.</p>
   </footer>
 </body>
 </html>
