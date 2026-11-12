@@ -1,5 +1,5 @@
 // ClipGrab extension: clip the video in the current tab using the ClipGrab API.
-const API = "https://clip-grab.vercel.app"; // http://localhost:8000 while developing
+const API = "https://clipgrab.aravarun.in"; // http://localhost:8000 while developing
 const $ = (id) => document.getElementById(id);
 const [link, start, end, submit, message] = ["link", "start", "end", "submit", "message"].map($);
 let info, downloadId, typing;

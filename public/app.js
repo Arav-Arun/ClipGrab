@@ -111,6 +111,6 @@ $("install-toggle").onclick = () => {
   $("install-toggle").setAttribute("aria-expanded", !steps.hidden);
 };
 
-// Links can be shared as https://clip-grab.vercel.app/?url=…
+// Links can be shared as https://clipgrab.aravarun.in/?url=…
 link.value = new URLSearchParams(location.search).get("url") ?? "";
 lookup();

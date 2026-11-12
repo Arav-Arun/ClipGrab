@@ -17,6 +17,6 @@
     "downloads"
   ],
   "host_permissions": [
-    "https://clip-grab.vercel.app/*"
+    "https://clipgrab.aravarun.in/*"
   ]
 }
