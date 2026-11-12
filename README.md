@@ -74,5 +74,3 @@ uv sync
 ```bash
 uv run python -m server
 ```
-
-Open http://localhost:8000.
