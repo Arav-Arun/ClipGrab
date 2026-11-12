@@ -60,11 +60,11 @@
 
         <fieldset class="presets">
           <legend class="label">Export as</legend>
-          <label><input type="radio" name="preset" value="mp4" checked><b>MP4</b><small>Original quality</small></label>
-          <label><input type="radio" name="preset" value="gif"><b>GIF</b><small>For chats and docs</small></label>
-          <label><input type="radio" name="preset" value="mp3"><b>MP3</b><small>Just the audio</small></label>
+          <label><input type="radio" name="preset" value="mp4" checked><b>MP4</b><small>Original</small></label>
+          <label><input type="radio" name="preset" value="gif"><b>GIF</b><small>For chats</small></label>
+          <label><input type="radio" name="preset" value="mp3"><b>MP3</b><small>Audio only</small></label>
           <label><input type="radio" name="preset" value="small"><b>Small</b><small>Under 10 MB</small></label>
-          <label><input type="radio" name="preset" value="vertical"><b>9:16</b><small>Reels, Shorts, TikTok</small></label>
+          <label><input type="radio" name="preset" value="vertical"><b>9:16</b><small>Reels &amp; Shorts</small></label>
         </fieldset>
 
         <label class="quality" id="quality-row">Quality <select id="quality"></select></label>
@@ -73,11 +73,14 @@
       </section>
     </form>
 
-    <section class="uses" aria-label="What each export is for">
-      <p><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg><b>GIF</b><span>For chats</span></p>
-      <p><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg><b>9:16</b><span>For Reels &amp; Shorts</span></p>
-      <p><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg><b>Small</b><span>Under 10 MB</span></p>
-      <p><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg><b>MP3</b><span>Just the audio</span></p>
+    <section class="features" aria-labelledby="features-title">
+      <h3 class="label" id="features-title">Features</h3>
+      <div class="feature-grid">
+        <p><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg><b>Trim visually</b><span>Drag the handles on the timeline, or mark the start and end while the video plays.</span></p>
+        <p><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m10 9 5 3-5 3z"/></svg><b>Five formats</b><span>MP4, a GIF for chats, MP3 audio, or a 9:16 crop for Reels, Shorts and TikTok.</span></p>
+        <p><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14h6v6M20 10h-6V4M14 10l7-7M3 21l7-7"/></svg><b>Fits upload limits</b><span>“Small” squeezes the clip under 10 MB so Discord and WhatsApp accept it.</span></p>
+        <p><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg><b>Free, no sign-up</b><span>No account and no watermark. Files are deleted from the server once sent.</span></p>
+      </div>
     </section>
 
     <section class="recent" id="recent" hidden>

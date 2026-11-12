@@ -111,12 +111,13 @@ video { width: 100%; max-height: 380px; border-radius: 12px; background: #000; }
 .recent span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; font-size: 0.88rem; }
 .recent small { color: var(--muted); font-size: 0.78rem; }
 
-/* What each preset is for: one short line each, under the card */
-.uses { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; }
-.uses p { display: grid; justify-items: center; align-content: center; gap: 0.3rem; padding: 1.1rem 0.5rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); text-align: center; }
-.uses svg { margin-bottom: 0.2rem; color: var(--green); }
-.uses b { font-size: 0.95rem; }
-.uses span { color: var(--muted); font-size: 0.78rem; }
+/* Features, under the tool */
+.features { display: grid; gap: 0.7rem; }
+.feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+.feature-grid p { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.75rem; padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+.feature-grid svg { grid-row: span 2; margin-top: 0.1rem; color: var(--green); }
+.feature-grid b { font-size: 0.92rem; }
+.feature-grid span { color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
 
 footer { padding: 2.5rem 1.25rem 0; text-align: center; color: var(--dim); font-size: 0.85rem; font-weight: 600; }
 
@@ -128,7 +129,7 @@ footer { padding: 2.5rem 1.25rem 0; text-align: center; color: var(--dim); font-
   .times label:last-of-type { grid-column: 2; grid-row: 1; }
   .times button { grid-row: 2; }
   #play-clip { grid-column: 1 / -1; grid-row: 3; }
-  .uses { grid-template-columns: 1fr 1fr; }
+  .feature-grid { grid-template-columns: 1fr; }
 }
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; }
